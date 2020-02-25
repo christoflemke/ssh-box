@@ -9,8 +9,9 @@ if [ $# != 3 ]; then
     exit 1
 fi
 
-public_key_file=$1
+public_key_file=$(realpath $1)
 secret_file=$(realpath $2)
+touch $3
 result="$(realpath $3)"
 tmp_dir_name=/tmp/$(openssl rand -hex 32)
 
@@ -25,7 +26,7 @@ cd $tmp_dir_name
 ssh-keygen -f $public_key_file -e -m PKCS8 > pub.pem
 openssl rand -base64 32 > key.bin
 openssl rsautl -encrypt -oaep -pubin -inkey pub.pem -in key.bin -out key.enc
-openssl aes-256-cbc -pbkdf2 -in $secret_file -out secret.enc -pass file:key.bin
+openssl aes-256-cbc -in $secret_file -out secret.enc -pass file:key.bin
 
 zipfile=data.zip
 
