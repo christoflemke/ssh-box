@@ -59,7 +59,8 @@ EOF
 unzip -q file.zip
 
 openssl rsautl -decrypt -oaep -inkey \$SSH_KEY -in key.enc -out secret.key
-openssl aes-256-cbc -pbkdf2 -d -in secret.enc -out \$out -pass file:secret.key
+openssl aes-256-cbc -d -in secret.enc -out \$out -pass file:secret.key
+echo "secret written to \${out}"
 
 WRAPPER_END
 
