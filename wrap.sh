@@ -26,7 +26,7 @@ cd $tmp_dir_name
 ssh-keygen -f $public_key_file -e -m PKCS8 > pub.pem
 openssl rand -base64 32 > key.bin
 openssl rsautl -encrypt -oaep -pubin -inkey pub.pem -in key.bin -out key.enc
-openssl aes-256-cbc -in $secret_file -out secret.enc -pass file:key.bin
+openssl aes-256-cbc -pbkdf2 -in $secret_file -out secret.enc -pass file:key.bin
 
 zipfile=data.zip
 
@@ -59,7 +59,7 @@ EOF
 unzip -q file.zip
 
 openssl rsautl -decrypt -oaep -inkey \$SSH_KEY -in key.enc -out secret.key
-openssl aes-256-cbc -d -in secret.enc -out \$out -pass file:secret.key
+openssl aes-256-cbc -pbkdf2 -d -in secret.enc -out \$out -pass file:secret.key
 echo "secret written to \${out}"
 
 WRAPPER_END
